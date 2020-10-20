@@ -26,4 +26,5 @@ typedef struct
 
 void init_number_by_integer(number_t *num, integer_t value);
 void parse_number(number_t *num, const char *str);
+void print_number(char *str, number_t *num);
 real_t pow_10(int value);

@@ -6,7 +6,7 @@
 
 #include "numbers.h"
 #include <memory.h>
-#include <math.h>
+#include <assert.h>
 
 void init_number_by_integer(number_t *n, integer_t value)
 {
@@ -115,6 +115,64 @@ void parse_number(number_t *n, const char *str)
 
 error:
     memset(n, 0, sizeof(number_t));
+}
+
+static char * print_integer(integer_t i, char *s)
+{
+    assert(i >= 0);
+    do
+    {
+        *s++ = (char)(i % 10 + '0');
+        i /= 10;
+    } while (i > 0);
+    return s;   
+}
+
+void print_number(char *s, number_t *n)
+{
+    char *p = s;
+    if (n->exponent)
+    {
+        if (n->exponent < 0)
+        {
+            p = print_integer(-n->exponent, p);
+            *p++ = '-';
+        }
+        else
+        {
+            p = print_integer(n->exponent, p);
+        }
+        *p++ = 'e';        
+    }
+    if (n->fract_part)
+    {
+        char *p1 = print_integer(n->fract_part, p);
+        int k = p1 - p;
+        p = p1;
+        while(k < n->precision)
+        {
+            *p++ = '0';
+            k++;            
+        }
+        *p++ = '.';
+    }
+    p = print_integer(n->int_part, p);
+    if (n->is_negative)
+    {
+        *p++ = '-';
+    }
+    
+    *p = '\0';
+    p--;
+    char *mid = (p - s) / 2 + s;
+    while (s <= mid)
+    {
+        char c = *p;
+        *p = *s;
+        *s = c;
+        s++;
+        p--;
+    }
 }
 
 static const integer_t pow10_table[] =
