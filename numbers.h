@@ -14,9 +14,8 @@ typedef long double real_t;
 
 typedef struct
 {
-    bool is_number;
-    integer_t int_value;
     real_t real_value;
+    bool is_number;
 
     bool is_negative;
     integer_t int_part;

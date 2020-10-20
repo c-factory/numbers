@@ -10,9 +10,8 @@
 
 void init_number_by_integer(number_t *n, integer_t value)
 {
-    n->is_number = true;
-    n->int_value = value;
     n->real_value = value;
+    n->is_number = true;
     if (value < 0)
     {
         n->is_negative = true;
@@ -26,6 +25,11 @@ void init_number_by_integer(number_t *n, integer_t value)
     n->fract_part = 0;
     n->precision = 0;
     n->exponent = 0;
+}
+
+static __inline bool is_number(char c)
+{
+    return c >= '0' && c <= '9';
 }
 
 void parse_number(number_t *n, const char *str)
@@ -44,42 +48,70 @@ void parse_number(number_t *n, const char *str)
     {
         n->is_negative = true;
         p++;
-        if (!(*p)) goto error;
     }
 
-    while(*p >= '0' && *p < '9')
+    if (!is_number(*p))
+        goto error;
+
+    do
     {
         n->int_part = n->int_part * 10 + *p - '0';
         p++;
-    }
-
-    if (*p != '.' && *p != 'e' && *p != 'E')
-    {
-        while(*p == ' ')
-            p++;
-        if ((*p)) goto error;
-
-        n->is_number = true;
-        n->int_value = n->is_negative ? -n->int_part : n->int_part;
-        n->real_value = n->int_value;
-        return;
-    }
+    } while(is_number(*p));
 
     if (*p == '.')
     {
         *p++;
-        if (!(*p)) goto error;
-        while(*p >= '0' && *p < '9')
+        if (!is_number(*p))
+            goto error;
+        do
         {
             n->fract_part = n->fract_part * 10 + *p - '0';
             n->precision++;
             p++;
+        } while (is_number(*p));        
+    }
+
+    bool exp_neg = false;
+    if (*p == 'e' || *p == 'E')
+    {
+        *p++;
+        if (*p == '+')
+        {
+            *p++;
         }
-        n->is_number = true;
-        n->int_value = n->is_negative ? -n->int_part : n->int_part;
-        n->real_value = n->int_value + n->fract_part / pow_10(n->precision);
-        return;
-   }
+        else if (*p == '-')
+        {
+            exp_neg = true;
+            *p++;
+        }
+        if (!is_number(*p))
+            goto error;
+        do
+        {
+            n->exponent = n->exponent * 10 + *p - '0';
+            p++;
+        } while(is_number(*p));
+    }
+
+    while(*p == ' ')
+        p++;
+    if ((*p)) goto error;
+
+    n->is_number = true;
+    real_t value = (n->int_part + n->fract_part / pow_10(n->precision));
+    if (n->is_negative) value = -value;
+    if (exp_neg)
+    {
+        value /= pow_10(n->exponent);
+        n->exponent = -n->exponent;
+    }
+    else
+    {
+        value *= pow_10(n->exponent);
+    }
+    n->real_value = value;
+    return;
 
 error:
     memset(n, 0, sizeof(number_t));

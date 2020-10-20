@@ -2,8 +2,8 @@
 
 int main(void)
 {
-    real_t p = pow_10(25);
     number_t n;
-    parse_number(&n, " 10.0024");
+    real_t *rv = (real_t*)&n;
+    parse_number(&n, "1024e-3");
     return 0;
 }
