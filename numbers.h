@@ -28,6 +28,7 @@ void init_number_by_integer(number_t *num, integer_t value);
 void init_number_by_real(number_t *num, real_t value);
 void parse_number(number_t *num, const char *str);
 void print_number(char *str, number_t *num);
+void negate_number(number_t *num);
 real_t pow_2(int value);
 real_t pow_10(int value);
 int get_max_integer_precision();

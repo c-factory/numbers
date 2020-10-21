@@ -247,6 +247,12 @@ void print_number(char *s, number_t *n)
     }
 }
 
+void negate_number(number_t *n)
+{
+    n->real_value = -n->real_value;
+    n->is_negative = !n->is_negative;
+}
+
 static const integer_t pow_2_table[] =
 {
     1,
