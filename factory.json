@@ -4,5 +4,6 @@
     "author": "c factory",
     "type": "library",
     "sources": "src/*.c",
-    "headers": "include"
+    "headers": "include",
+    "stdlib": "math"
 }
